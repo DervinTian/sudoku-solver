@@ -1,0 +1,6 @@
+/.vscode
+/*.DSYM
+test
+test.cpp
+sudoku_map*
+solved_sudoku
