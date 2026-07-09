@@ -54,6 +54,8 @@ int main(){
         fill_possible_sudoku_table_values(i, sudoku_map);
     }
 
+    // fill_possible_sudoku_table_values(0, sudoku_map);
+
     std::cout << possible_tbl0_values.size() << std::endl;
     std::cout << possible_tbl1_values.size() << std::endl;
     std::cout << possible_tbl2_values.size() << std::endl;
@@ -64,6 +66,6 @@ int main(){
     std::cout << possible_tbl7_values.size() << std::endl;
     std::cout << possible_tbl8_values.size() << std::endl;
 
-    // std::cout << "Solving...\n";
-    // find_sudoku_solution();
+    std::cout << "Solving...\n";
+    find_sudoku_solution(sudoku_map);
 }   

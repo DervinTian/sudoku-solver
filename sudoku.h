@@ -42,7 +42,7 @@ extern int global_counter;
 std::vector<std::vector<std::vector<char>>> read_in_sudoku();
 bool check_sudoku_map(const std::vector<std::vector<std::vector<char>>>& sudoku_map);
 void fill_possible_sudoku_table_values(int table_num, std::vector<std::vector<std::vector<char>>>& sudoku_map);
-void find_sudoku_solution();
+void find_sudoku_solution(std::vector<std::vector<std::vector<char>>> &base_sudoku_table);
 void print_out_sudoku_grid(const std::vector<std::vector<std::vector<char>>>& sudoku_grid);
 bool valid_prune(const std::vector<std::vector<std::vector<char>>>& sudoku_grid);
 std::unordered_set<char> get_row_values(int rownum, const std::vector<std::vector<std::vector<char>>>& sudoku_grid);

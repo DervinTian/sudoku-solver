@@ -11,7 +11,7 @@
 #include <unordered_set>
 #include <unordered_map>
 
-std::string SUDOKU_MAP = "sudoku_map_HARD";
+std::string SUDOKU_MAP = "input_sudoku";
 int NUM_ROWS = 9;
 int NUM_COLS = 9;
 int global_counter = 0;
@@ -276,37 +276,40 @@ void fill_in_table(std::vector<std::vector<char>>& base_table, std::unordered_ma
         std::string hash_key = std::to_string(base_row_index + empty_i) + "-" + std::to_string(base_col_index + empty_j);
 
         std::vector<std::vector<char>> base_table_copy = base_table;
-        base_table_copy[empty_i][empty_j] = *tile_values_to_fill_in[hash_key].begin();
 
-        if(table_num == 0){
-            possible_tbl0_values.push_back(base_table_copy);
-        }
-        else if(table_num == 1){
-            possible_tbl1_values.push_back(base_table_copy);
-        }
-        else if(table_num == 2){
-            possible_tbl2_values.push_back(base_table_copy);
-        }
-        else if(table_num == 3){
-            possible_tbl3_values.push_back(base_table_copy);
-        }
-        else if(table_num == 4){
-            possible_tbl4_values.push_back(base_table_copy);
-        }
-        else if(table_num == 5){
-            possible_tbl5_values.push_back(base_table_copy);
-        }
-        else if(table_num == 6){
-            possible_tbl6_values.push_back(base_table_copy);
-        }
-        else if(table_num == 7){
-            possible_tbl7_values.push_back(base_table_copy);
-        }
-        else if(table_num == 8){
-            possible_tbl8_values.push_back(base_table_copy);
-        }
-        else{
-            std::cout << "AFDSKJFAOHEUSKJBFZDVZ\n";
+        for(size_t i = 0; i < tile_values_to_fill_in[hash_key].size(); ++i){
+            base_table_copy[empty_i][empty_j] = tile_values_to_fill_in[hash_key][i];
+
+            if(table_num == 0){
+                possible_tbl0_values.push_back(base_table_copy);
+            }
+            else if(table_num == 1){
+                possible_tbl1_values.push_back(base_table_copy);
+            }
+            else if(table_num == 2){
+                possible_tbl2_values.push_back(base_table_copy);
+            }
+            else if(table_num == 3){
+                possible_tbl3_values.push_back(base_table_copy);
+            }
+            else if(table_num == 4){
+                possible_tbl4_values.push_back(base_table_copy);
+            }
+            else if(table_num == 5){
+                possible_tbl5_values.push_back(base_table_copy);
+            }
+            else if(table_num == 6){
+                possible_tbl6_values.push_back(base_table_copy);
+            }
+            else if(table_num == 7){
+                possible_tbl7_values.push_back(base_table_copy);
+            }
+            else if(table_num == 8){
+                possible_tbl8_values.push_back(base_table_copy);
+            }
+            else{
+                std::cout << "AFDSKJFAOHEUSKJBFZDVZ\n";
+            }
         }
     }
     else{
@@ -465,6 +468,10 @@ void fill_possible_sudoku_table_values(int table_num, std::vector<std::vector<st
 void print_out_sudoku_grid(const std::vector<std::vector<std::vector<char>>>& sudoku_grid){
     int base_table_index = 0;
     for(int i = 0; i < NUM_ROWS; ++i){
+
+        if (i % 3 == 0) {
+            std::cout << "+-----+-----+-----+\n";
+        }
         
         if(i >= 0 && i < 3){
             base_table_index = 0;
@@ -479,20 +486,29 @@ void print_out_sudoku_grid(const std::vector<std::vector<std::vector<char>>>& su
             std::cout << "Too many stuffs\n";
         }
 
+        std::cout << "| ";
+
         std::cout << (sudoku_grid[base_table_index + 0][i % 3][0]);
         std::cout << (sudoku_grid[base_table_index + 0][i % 3][1]);
         std::cout << (sudoku_grid[base_table_index + 0][i % 3][2]);
+
+        std::cout << " | ";
 
         std::cout << (sudoku_grid[base_table_index + 1][i % 3][0]);
         std::cout << (sudoku_grid[base_table_index + 1][i % 3][1]);
         std::cout << (sudoku_grid[base_table_index + 1][i % 3][2]);
 
+        std::cout << " | ";
+
         std::cout << (sudoku_grid[base_table_index + 2][i % 3][0]);
         std::cout << (sudoku_grid[base_table_index + 2][i % 3][1]);
         std::cout << (sudoku_grid[base_table_index + 2][i % 3][2]);
 
+        std::cout << " | ";
+
         std::cout << std::endl;
     }
+    std::cout << "+-----+-----+-----+\n";
 }
 
 bool insert_and_check_for_dupes(std::unordered_set<char>& table_values, char value_to_insert){
@@ -621,6 +637,12 @@ void recursively_solve_sudoku(std::vector<std::vector<std::vector<char>>>& base_
         potential_tables[6] = possible_tbl6_values;
         potential_tables[7] = possible_tbl7_values;
         potential_tables[8] = possible_tbl8_values;
+
+        int big_num = 1;
+        for(int i = 0; i < potential_tables.size(); ++i){
+            big_num = big_num * potential_tables[i].size();
+        }
+
         assert(tables_to_be_filled_in.size() == 1);
 
         int table_left_to_fill = tables_to_be_filled_in[0];
@@ -677,7 +699,7 @@ void recursively_solve_sudoku(std::vector<std::vector<std::vector<char>>>& base_
     }
 }
 
-void find_sudoku_solution(){
+void find_sudoku_solution(std::vector<std::vector<std::vector<char>>> &base_sudoku_table){
     std::vector<int> tables_still_needed_to_fill_in;
     std::vector<std::vector<std::vector<char>>> base_table;
     int initl_empty_values = 0;
@@ -705,25 +727,13 @@ void find_sudoku_solution(){
     original_tables[8] = original_tbl8_values;
 
     for(int i = 0; i < NUM_ROWS; ++i){
-        if(potential_tables[i].size() == 0){
-            base_table.push_back(original_tables[i]);
-        }
-        else{
-            initl_empty_values++;
+        if(potential_tables[i].size() != 0){
             tables_still_needed_to_fill_in.push_back(i);
-
-            std::vector<std::vector<char>> tmp_vector;
-            for(int a = 0; a < 3; ++a){
-                tmp_vector.push_back(std::vector<char>{});
-                for(int b = 0; b < 3; ++b){
-                    tmp_vector[a].push_back('-');
-                }
-            }
-            base_table.push_back(tmp_vector);
+            initl_empty_values++;
         }
     }
 
-    recursively_solve_sudoku(base_table, tables_still_needed_to_fill_in, initl_empty_values);
+    recursively_solve_sudoku(base_sudoku_table, tables_still_needed_to_fill_in, initl_empty_values);
 
 }
 
