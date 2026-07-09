@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <unordered_map>
 
+// Initialize the global variables
 std::string SUDOKU_MAP = "input_sudoku";
 int NUM_ROWS = 9;
 int NUM_COLS = 9;
@@ -26,18 +27,9 @@ std::vector<std::vector<std::vector<char>>> possible_tbl6_values;
 std::vector<std::vector<std::vector<char>>> possible_tbl7_values;
 std::vector<std::vector<std::vector<char>>> possible_tbl8_values;
 
-std::vector<std::vector<char>> original_tbl0_values;
-std::vector<std::vector<char>> original_tbl1_values;
-std::vector<std::vector<char>> original_tbl2_values;
-std::vector<std::vector<char>> original_tbl3_values;
-std::vector<std::vector<char>> original_tbl4_values;
-std::vector<std::vector<char>> original_tbl5_values;
-std::vector<std::vector<char>> original_tbl6_values;
-std::vector<std::vector<char>> original_tbl7_values;
-std::vector<std::vector<char>> original_tbl8_values;
-
 std::vector<std::vector<std::vector<char>>> sudoku_solution;
 
+// Go thorugh the input sudoku path and then just read in the sudoku grid into multi-dimensional vectors in-memory
 std::vector<std::vector<std::vector<char>>> read_in_sudoku(){
     std::ifstream in_memory_sudoku(SUDOKU_MAP);
 
@@ -81,6 +73,7 @@ std::vector<std::vector<std::vector<char>>> read_in_sudoku(){
     return result;
 }
 
+// Function to check whether or not the sudoku map passed in is actually a correct solution
 bool check_sudoku_map(const std::vector<std::vector<std::vector<char>>>& sudoku_map){
     bool result = true;
 
@@ -166,6 +159,7 @@ bool check_sudoku_map(const std::vector<std::vector<std::vector<char>>>& sudoku_
     return true;
 }
 
+// For the rownum, get all the different values already in that row
 std::unordered_set<char> get_row_values(int rownum, const std::vector<std::vector<std::vector<char>>>& sudoku_grid){
     std::unordered_set<char> table_values;
 
@@ -198,6 +192,7 @@ std::unordered_set<char> get_row_values(int rownum, const std::vector<std::vecto
     return table_values;
 }
 
+// For the colnum, get all the values within that column
 std::unordered_set<char> get_col_values(int colnum, const std::vector<std::vector<std::vector<char>>>& sudoku_grid){
     std::unordered_set<char> table_values;
     int base_table_index = 0;
@@ -230,6 +225,9 @@ std::unordered_set<char> get_col_values(int colnum, const std::vector<std::vecto
     return table_values;
 }
 
+/*
+Function to recursively fill in the table values
+*/
 void fill_in_table(std::vector<std::vector<char>>& base_table, std::unordered_map<std::string, std::vector<char>> &tile_values_to_fill_in, int empty_values, int table_num){
     if(empty_values == 1){
         int empty_i = 0;
@@ -381,6 +379,9 @@ void fill_in_table(std::vector<std::vector<char>>& base_table, std::unordered_ma
     }
 }   
 
+/*
+Initial function to fill in the table values for a given table (used in main.cpp)
+*/
 void fill_possible_sudoku_table_values(int table_num, std::vector<std::vector<std::vector<char>>>& sudoku_map){
     std::unordered_set<char> filled_in_values;
     int starting_empty_values = 0;
@@ -465,6 +466,9 @@ void fill_possible_sudoku_table_values(int table_num, std::vector<std::vector<st
 
 }
 
+/*
+Global function to just print out the grid, good for debugging
+*/
 void print_out_sudoku_grid(const std::vector<std::vector<std::vector<char>>>& sudoku_grid){
     int base_table_index = 0;
     for(int i = 0; i < NUM_ROWS; ++i){
@@ -511,6 +515,9 @@ void print_out_sudoku_grid(const std::vector<std::vector<std::vector<char>>>& su
     std::cout << "+-----+-----+-----+\n";
 }
 
+/*
+Pruner helper function to check if there are dupes that are in the row when we go to insert a value
+*/
 bool insert_and_check_for_dupes(std::unordered_set<char>& table_values, char value_to_insert){
     if(value_to_insert == '-'){
         return false;
@@ -525,6 +532,9 @@ bool insert_and_check_for_dupes(std::unordered_set<char>& table_values, char val
     }
 }   
 
+/*
+Check whether or not the sudoku grid is a valid grid so we can decide whether to prune or not
+*/
 bool valid_prune(const std::vector<std::vector<std::vector<char>>>& sudoku_grid){
     int base_table_index = 0;
     for(int i = 0; i < NUM_ROWS; ++i){
@@ -624,7 +634,9 @@ bool valid_prune(const std::vector<std::vector<std::vector<char>>>& sudoku_grid)
     return true;
 }
 
-
+/*
+Recursive function to go through the sudoku grid and try out different table combinations to try and find the right one
+*/
 void recursively_solve_sudoku(std::vector<std::vector<std::vector<char>>>& base_table, std::vector<int>& tables_to_be_filled_in, int empty_values){
     if(empty_values == 1){
         std::unordered_map<int, std::vector<std::vector<std::vector<char>>>> potential_tables;
@@ -699,6 +711,9 @@ void recursively_solve_sudoku(std::vector<std::vector<std::vector<char>>>& base_
     }
 }
 
+/*
+Function to run the recursive function (used in main.cpp)
+*/
 void find_sudoku_solution(std::vector<std::vector<std::vector<char>>> &base_sudoku_table){
     std::vector<int> tables_still_needed_to_fill_in;
     std::vector<std::vector<std::vector<char>>> base_table;
@@ -714,17 +729,6 @@ void find_sudoku_solution(std::vector<std::vector<std::vector<char>>> &base_sudo
     potential_tables[6] = possible_tbl6_values;
     potential_tables[7] = possible_tbl7_values;
     potential_tables[8] = possible_tbl8_values;
-
-    std::unordered_map<int, std::vector<std::vector<char>>> original_tables;
-    original_tables[0] = original_tbl0_values;
-    original_tables[1] = original_tbl1_values;
-    original_tables[2] = original_tbl2_values;
-    original_tables[3] = original_tbl3_values;
-    original_tables[4] = original_tbl4_values;
-    original_tables[5] = original_tbl5_values;
-    original_tables[6] = original_tbl6_values;
-    original_tables[7] = original_tbl7_values;
-    original_tables[8] = original_tbl8_values;
 
     for(int i = 0; i < NUM_ROWS; ++i){
         if(potential_tables[i].size() != 0){
